@@ -73,5 +73,5 @@ ASUSPROFILE(){
 }
 
 while true; do
-  sleep 1 && xsetroot -name " $(SEP) $(ASUSPROFILE) $(SEP) $(TRAFFIC) $(SEP) $(KB) $(SEP) $(VOL) $(SEP) $(CPU)% $(SEP) $(MEM) $(SEP) $(BAT2) $(SEP) $(TIME)"
+  sleep 1 && xsetroot -name " $(SEP) $(ASUSPROFILE) $(SEP) $(KB) $(SEP) $(VOL) $(SEP) $(CPU)% $(SEP) $(MEM) $(SEP) $(BAT2) $(SEP) $(TIME)"
 done

@@ -213,10 +213,10 @@ static Key keys[] = {
     {MODKEY, XK_j, focusstack, {.i = +1}},
     {MODKEY, XK_k, focusstack, {.i = -1}},
     {MODKEY | ShiftMask, XK_r, quit, {1}},
-    {MODKEY, XK_i, focusmon, {.i = -1}},
-    {MODKEY, XK_o, focusmon, {.i = +1}},
-    {MODKEY | ShiftMask, XK_i, tagmon, {.i = -1}},
-    {MODKEY | ShiftMask, XK_o, tagmon, {.i = +1}},
+    {MODKEY, XK_o, focusmon, {.i = -1}},
+    {MODKEY, XK_i, focusmon, {.i = +1}},
+    {MODKEY | ShiftMask, XK_o, tagmon, {.i = -1}},
+    {MODKEY | ShiftMask, XK_i, tagmon, {.i = +1}},
 
     // Tags
     TAGKEYS(XK_1, 0) TAGKEYS(XK_2, 1) TAGKEYS(XK_3, 2) TAGKEYS(XK_4, 3)
