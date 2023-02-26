@@ -32,6 +32,14 @@ static const char *colors[][3] = {
     [SchemeSel] = {col_white, col_bg, col_border},
 };
 
+// ALT TAB
+static const unsigned int tabModKey 		= 0x40;	/* if this key is hold the alt-tab functionality stays acitve. This key must be the same as key that is used to active functin altTabStart `*/
+static const unsigned int tabCycleKey 		= 0x17;	/* if this key is hit the alt-tab program moves one position forward in clients stack. This key must be the same as key that is used to active functin altTabStart */
+static const unsigned int tabPosY 			= 1;	/* tab position on Y axis, 0 = bottom, 1 = center, 2 = top */
+static const unsigned int tabPosX 			= 1;	/* tab position on X axis, 0 = left, 1 = center, 2 = right */
+static const unsigned int maxWTab 			= 600;	/* tab menu width */
+static const unsigned int maxHTab 			= 200;	/* tab menu height */
+
 static const char *const autostart[] = {
     "/usr/local/bin/bar/bar.sh",
     NULL, // startus bar
@@ -62,8 +70,9 @@ static Sp scratchpads[] = {
 };
 
 /* tagging */
-static const char *tags[] = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ",
-                             " 6 ", " 7 ", " 8 ", " 9 "};
+// static const char *tags[] = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ",
+//                              " 6 ", " 7 ", " 8 ", " 9 "};
+static char *tags[] = {"", "", "", "", " ", "", ""};
 static const unsigned int ulinepad =
     5; /* horizontal padding between the underline and tag */
 static const unsigned int ulinestroke =
@@ -100,13 +109,13 @@ static const Layout layouts[] = {
     {"[]", tile}, /* first entry is default */
     {"[M]", monocle},
     {"|@|", spiral},
-    {"󰹵", dwindle},
+    {"D", dwindle},
     {"H[]", deck},
     {"TTT", bstack},
     {"===", bstackhoriz},
     {"HHH", grid},
     {"###", nrowgrid},
-    {"󰕯", horizgrid},
+    {"HZ", horizgrid},
     {":::", gaplessgrid},
     {"|M|", centeredmaster},
     {">M>", centeredfloatingmaster},
@@ -134,19 +143,17 @@ static char dmenumon[2] =
 static const char *dmenucmd[] = {"dmenu_run", "-c", "-l",    "20", "-g",
                                  "2",         "-p", "Run :", NULL};
 static const char *roficmd[] = {"rofi", "-show", "drun", NULL};
-static const char *rofiwcmd[] = {"rofi", "-show", "window", NULL};
 static const char *termcmd[] = {"st", NULL};
 static const char *fmcmd[] = {"pcmanfm", NULL};
 static const char *webcmd[] = {"$BROWSER", NULL};
-static const char *scrotcmd[] = {"scrot", NULL};
+static const char *scrotcmd[] = {"maim -s | xclip -sel clip -t image/png", NULL};
 static const char *profilecmd[] = {"asusctl profile -n", NULL};
 
 #include "movestack.c"
 static Key keys[] = {
     // Apps
     {MODKEY, XK_Return, spawn, {.v = termcmd}},
-    {MODKEY, XK_d, spawn, SHCMD("dmenu_extended_run")},
-    {MODKEY, XK_w, spawn, SHCMD("$BROWSER")},
+    {MODKEY, XK_w, spawn, {.v = webcmd}},
     {MODKEY, XK_r, spawn, SHCMD(TERMINAL " -e lfrun")},
     {MODKEY, XK_e, spawn, SHCMD(TERMINAL " -e lvim")},
     {MODKEY | ShiftMask, XK_s, spawn, {.v = scrotcmd}},
@@ -156,9 +163,9 @@ static Key keys[] = {
     {MODKEY | ShiftMask, XK_q, spawn, SHCMD("sysact")},
     {MODKEY | ControlMask, XK_k, spawn, SHCMD("change-kb-layout")},
     {MODKEY | ShiftMask, XK_l, spawn, SHCMD("bitwarden")},
-    {MODKEY | ShiftMask, XK_h, spawn, SHCMD("dlpass copy")},
     {MODKEY | ShiftMask, XK_m, spawn, SHCMD(TERMINAL " -e htop")},
     {MODKEY, XK_m, spawn, SHCMD("spotify")},
+    {MODKEY, XK_n, spawn, SHCMD(TERMINAL " -e nmtui")},
     {0, XF86XK_AudioRaiseVolume, spawn,
      SHCMD("pactl -- set-sink-volume 0 +5%")},
     {0, XF86XK_AudioLowerVolume, spawn,
@@ -171,7 +178,7 @@ static Key keys[] = {
     {0, XF86XK_KbdBrightnessDown, spawn,
      SHCMD("brightnessctl --device='asus::kbd_backlight' set 1-")},
     {0, XF86XK_Launch3, spawn, SHCMD("asusctl led-mode -n")},
-    {0, XF86XK_Launch4, spawn, SHCMD("asusctl profile -n")},
+    {0, XF86XK_Launch4, spawn, {.v = profilecmd}},
     {MODKEY, XK_F3, spawn, SHCMD("displayselect")},
     {MODKEY, XK_F9, spawn, SHCMD("dmenumount")},
     {MODKEY, XK_F10, spawn, SHCMD("dmenuumount")},
@@ -190,16 +197,18 @@ static Key keys[] = {
 
     // Layout Controls
     {MODKEY, XK_f, togglefloating, {0}},
-    {MODKEY, XK_Tab, cyclelayout, {.i = +1}},
-    {MODKEY, XK_t, setlayout, {.v = &layouts[0]}},
+  	{Mod1Mask, XK_Tab,  altTabStart, {0} },
+  	{MODKEY, XK_Tab,  shiftview, {1} },
+    {MODKEY | ShiftMask, XK_Tab, shiftview, {-1}},
+    {MODKEY, XK_t, cyclelayout, {.i = +1}}, /* cyclelayout*/
+    {MODKEY | ShiftMask, XK_t, setlayout, {.v = &layouts[0]}}, /* default */
     {MODKEY | ShiftMask, XK_space, togglefullscr, {0}},
     {MODKEY, XK_b, togglebar, {0}},
     {MODKEY, XK_c, zoom, {0}},
-    {MODKEY | ShiftMask, XK_t, setlayout, {.v = &layouts[1]}}, /* bstack */
-    {MODKEY, XK_y, setlayout, {.v = &layouts[2]}},             /* spiral */
-    {MODKEY | ShiftMask, XK_y, setlayout, {.v = &layouts[3]}}, /* dwindle */
-    {MODKEY, XK_u, setlayout, {.v = &layouts[4]}},             /* deck */
-    {MODKEY | ShiftMask, XK_u, setlayout, {.v = &layouts[5]}}, /* monocle */
+    //{MODKEY, XK_y, setlayout, {.v = &layouts[2]}},             /* spiral */
+    //{MODKEY | ShiftMask, XK_y, setlayout, {.v = &layouts[3]}}, /* dwindle */
+    //{MODKEY, XK_u, setlayout, {.v = &layouts[4]}},             /* deck */
+    //{MODKEY | ShiftMask, XK_u, setlayout, {.v = &layouts[5]}}, /* monocle */
     {MODKEY | ShiftMask, XK_j, movestack, {.i = +1}},
     {MODKEY | ShiftMask, XK_k, movestack, {.i = -1}},
     // Dwm Stuff
@@ -220,8 +229,8 @@ static Key keys[] = {
 
     // Tags
     TAGKEYS(XK_1, 0) TAGKEYS(XK_2, 1) TAGKEYS(XK_3, 2) TAGKEYS(XK_4, 3)
-        TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5) TAGKEYS(XK_7, 6) TAGKEYS(XK_8, 7)
-            TAGKEYS(XK_9, 8)
+        TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5)  TAGKEYS(XK_7, 6)// TAGKEYS(XK_8, 7)
+            //TAGKEYS(XK_9, 8)
     // Gaps
     {MODKEY | Mod1Mask, XK_u, incrgaps, {.i = +1}},
     {MODKEY | Mod1Mask | ShiftMask, XK_u, incrgaps, {.i = -1}},
