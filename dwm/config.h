@@ -33,12 +33,20 @@ static const char *colors[][3] = {
 };
 
 // ALT TAB
-static const unsigned int tabModKey 		= 0x40;	/* if this key is hold the alt-tab functionality stays acitve. This key must be the same as key that is used to active functin altTabStart `*/
-static const unsigned int tabCycleKey 		= 0x17;	/* if this key is hit the alt-tab program moves one position forward in clients stack. This key must be the same as key that is used to active functin altTabStart */
-static const unsigned int tabPosY 			= 1;	/* tab position on Y axis, 0 = bottom, 1 = center, 2 = top */
-static const unsigned int tabPosX 			= 1;	/* tab position on X axis, 0 = left, 1 = center, 2 = right */
-static const unsigned int maxWTab 			= 600;	/* tab menu width */
-static const unsigned int maxHTab 			= 200;	/* tab menu height */
+static const unsigned int tabModKey =
+    0x40; /* if this key is hold the alt-tab functionality stays acitve. This
+             key must be the same as key that is used to active functin
+             altTabStart `*/
+static const unsigned int tabCycleKey =
+    0x17; /* if this key is hit the alt-tab program moves one position forward
+             in clients stack. This key must be the same as key that is used to
+             active functin altTabStart */
+static const unsigned int tabPosY =
+    1; /* tab position on Y axis, 0 = bottom, 1 = center, 2 = top */
+static const unsigned int tabPosX =
+    1; /* tab position on X axis, 0 = left, 1 = center, 2 = right */
+static const unsigned int maxWTab = 600; /* tab menu width */
+static const unsigned int maxHTab = 200; /* tab menu height */
 
 static const char *const autostart[] = {
     "/usr/local/bin/bar/bar.sh",
@@ -72,7 +80,8 @@ static Sp scratchpads[] = {
 /* tagging */
 // static const char *tags[] = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ",
 //                              " 6 ", " 7 ", " 8 ", " 9 "};
-static char *tags[] = {"", "", "", "", " ", "", ""};
+static char *tags[] = {"", "", "", "", " ",
+                       " 6 ", " 7 ", "", "", " 0 "};
 static const unsigned int ulinepad =
     5; /* horizontal padding between the underline and tag */
 static const unsigned int ulinestroke =
@@ -146,17 +155,18 @@ static const char *roficmd[] = {"rofi", "-show", "drun", NULL};
 static const char *termcmd[] = {"st", NULL};
 static const char *fmcmd[] = {"pcmanfm", NULL};
 static const char *webcmd[] = {"$BROWSER", NULL};
-static const char *scrotcmd[] = {"maim -s | xclip -sel clip -t image/png", NULL};
 static const char *profilecmd[] = {"asusctl profile -n", NULL};
 
 #include "movestack.c"
 static Key keys[] = {
     // Apps
     {MODKEY, XK_Return, spawn, {.v = termcmd}},
-    {MODKEY, XK_w, spawn, {.v = webcmd}},
-    {MODKEY, XK_r, spawn, SHCMD(TERMINAL " -e lfrun")},
+    {MODKEY, XK_w, spawn, SHCMD("$BROWSER")},
+    {MODKEY, XK_f, spawn, SHCMD("nautilus")},
+    {MODKEY, XK_space, spawn, SHCMD("ulauncher")},
+    {MODKEY, XK_r, spawn, SHCMD(TERMINAL " -e ranger")},
     {MODKEY, XK_e, spawn, SHCMD(TERMINAL " -e lvim")},
-    {MODKEY | ShiftMask, XK_s, spawn, {.v = scrotcmd}},
+    {MODKEY | ShiftMask, XK_s, spawn, SHCMD("maimpick")},
     {MODKEY | ShiftMask, XK_Return, spawn, {.v = roficmd}},
     {MODKEY | ShiftMask, XK_d, spawn, {.v = dmenucmd}},
     {MODKEY | ShiftMask, XK_e, spawn, {.v = fmcmd}},
@@ -178,7 +188,7 @@ static Key keys[] = {
     {0, XF86XK_KbdBrightnessDown, spawn,
      SHCMD("brightnessctl --device='asus::kbd_backlight' set 1-")},
     {0, XF86XK_Launch3, spawn, SHCMD("asusctl led-mode -n")},
-    {0, XF86XK_Launch4, spawn, {.v = profilecmd}},
+    {0, XF86XK_Launch4, spawn, SHCMD("asusctl profile -n")},
     {MODKEY, XK_F3, spawn, SHCMD("displayselect")},
     {MODKEY, XK_F9, spawn, SHCMD("dmenumount")},
     {MODKEY, XK_F10, spawn, SHCMD("dmenuumount")},
@@ -196,11 +206,11 @@ static Key keys[] = {
      SHCMD("playerctl --player=spotify,%any volume 0.1+")},
 
     // Layout Controls
-    {MODKEY, XK_f, togglefloating, {0}},
-  	{Mod1Mask, XK_Tab,  altTabStart, {0} },
-  	{MODKEY, XK_Tab,  shiftview, {1} },
+    {MODKEY | ShiftMask, XK_f, togglefloating, {0}},
+    {Mod1Mask, XK_Tab, altTabStart, {0}},
+    {MODKEY, XK_Tab, shiftview, {1}},
     {MODKEY | ShiftMask, XK_Tab, shiftview, {-1}},
-    {MODKEY, XK_t, cyclelayout, {.i = +1}}, /* cyclelayout*/
+    {MODKEY, XK_t, cyclelayout, {.i = +1}},                    /* cyclelayout*/
     {MODKEY | ShiftMask, XK_t, setlayout, {.v = &layouts[0]}}, /* default */
     {MODKEY | ShiftMask, XK_space, togglefullscr, {0}},
     {MODKEY, XK_b, togglebar, {0}},
@@ -218,7 +228,6 @@ static Key keys[] = {
     {MODKEY | ControlMask, XK_h, incnmaster, {.i = -1}},
     {MODKEY | ShiftMask, XK_c, killclient, {0}},
     {MODKEY, XK_q, killclient, {0}},
-    {MODKEY, XK_space, focusstack, {.i = +1}},
     {MODKEY, XK_j, focusstack, {.i = +1}},
     {MODKEY, XK_k, focusstack, {.i = -1}},
     {MODKEY | ShiftMask, XK_r, quit, {1}},
@@ -229,8 +238,8 @@ static Key keys[] = {
 
     // Tags
     TAGKEYS(XK_1, 0) TAGKEYS(XK_2, 1) TAGKEYS(XK_3, 2) TAGKEYS(XK_4, 3)
-        TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5)  TAGKEYS(XK_7, 6)// TAGKEYS(XK_8, 7)
-            //TAGKEYS(XK_9, 8)
+        TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5) TAGKEYS(XK_7, 6) TAGKEYS(XK_8, 7)
+            TAGKEYS(XK_9, 8) TAGKEYS(XK_0, 9)
     // Gaps
     {MODKEY | Mod1Mask, XK_u, incrgaps, {.i = +1}},
     {MODKEY | Mod1Mask | ShiftMask, XK_u, incrgaps, {.i = -1}},
