@@ -3,14 +3,14 @@
 #define TERMINAL "st"
 #define TERMCLASS "St"
 /* appearance */
-static const unsigned int borderpx = 5; /* border pixel of windows */
+static const unsigned int borderpx = 4; /* border pixel of windows */
 static const unsigned int snap = 32;    /* snap pixel */
-static const unsigned int gappih = 20;  /* horiz inner gap between windows */
-static const unsigned int gappiv = 20;  /* vert inner gap between windows */
+static const unsigned int gappih = 7;   /* horiz inner gap between windows */
+static const unsigned int gappiv = 7;   /* vert inner gap between windows */
 static const unsigned int gappoh =
-    20; /* horiz outer gap between windows and screen edge */
+    7; /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov =
-    20; /* vert outer gap between windows and screen edge */
+    7; /* vert outer gap between windows and screen edge */
 static int smartgaps =
     0; /* 1 means no outer gap when there is only one window */
 static const int showbar = 1;      /* 0 means no bar */
@@ -80,8 +80,8 @@ static Sp scratchpads[] = {
 /* tagging */
 // static const char *tags[] = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ",
 //                              " 6 ", " 7 ", " 8 ", " 9 "};
-static char *tags[] = {"", "", "", "", " ",
-                       " 6 ", " 7 ", "", "", " 0 "};
+static char *tags[] = {"www",    "dev",   "doc",  "file", "mail",
+                       "social", "video", "misc", "mus",  " 0 "};
 static const unsigned int ulinepad =
     5; /* horizontal padding between the underline and tag */
 static const unsigned int ulinestroke =
@@ -98,6 +98,21 @@ static const Rule rules[] = {
     {NULL, "spterm", NULL, SPTAG(0), 1, -1},
     {NULL, "spaud", NULL, SPTAG(1), 1, -1},
     {NULL, "spmus", NULL, SPTAG(2), 1, -1},
+    {"Brave-browser", NULL, NULL, 1 << 0, 0, -1},
+    {"st", NULL, NULL, 1 << 1, 0, -1},
+    {"tmux", NULL, NULL, 1 << 1, 0, -1},
+    {"st-float", NULL, NULL, -1, 1, -1},
+    {"Code", NULL, NULL, 1 << 1, 0, -1},
+    {"obsidian", NULL, NULL, 1 << 2, 0, -1},
+    {"Zathura", NULL, NULL, 1 << 2, 0, -1},
+    {"Evince", NULL, NULL, 1 << 2, 0, -1},
+    {"ranger", NULL, NULL, 1 << 3, 0, -1},
+    {"org.gnome.Nautilus", NULL, NULL, 1 << 3, 0, -1},
+    {"thunderbird", NULL, NULL, 1 << 4, 0, -1},
+    {"neomutt", NULL, NULL, 1 << 4, 0, -1},
+    {"Ferdium", NULL, NULL, 1 << 5, 0, -1},
+    {"Nextcloud", NULL, NULL, 1 << 8, 0, -1},
+    {"Spotify", NULL, NULL, 1 << 8, 0, -1},
 };
 
 /* layout(s) */
@@ -152,7 +167,7 @@ static char dmenumon[2] =
 static const char *dmenucmd[] = {"dmenu_run", "-c", "-l",    "20", "-g",
                                  "2",         "-p", "Run :", NULL};
 static const char *roficmd[] = {"rofi", "-show", "drun", NULL};
-static const char *termcmd[] = {"st", NULL};
+static const char *termcmd[] = {"st -e tmux", NULL};
 static const char *fmcmd[] = {"pcmanfm", NULL};
 static const char *webcmd[] = {"$BROWSER", NULL};
 static const char *profilecmd[] = {"asusctl profile -n", NULL};
@@ -160,14 +175,15 @@ static const char *profilecmd[] = {"asusctl profile -n", NULL};
 #include "movestack.c"
 static Key keys[] = {
     // Apps
-    {MODKEY, XK_Return, spawn, {.v = termcmd}},
+    {MODKEY, XK_Return, spawn, SHCMD(TERMINAL " -c tmux -e tmux")},
     {MODKEY, XK_w, spawn, SHCMD("$BROWSER")},
     {MODKEY, XK_f, spawn, SHCMD("nautilus")},
-    {MODKEY, XK_space, spawn, SHCMD("ulauncher")},
-    {MODKEY, XK_r, spawn, SHCMD(TERMINAL " -e ranger")},
+    {MODKEY, XK_space, spawn, SHCMD("ulauncher-toggle a")},
+    {MODKEY, XK_r, spawn, SHCMD("ranger-dwm")},
     {MODKEY, XK_e, spawn, SHCMD(TERMINAL " -e lvim")},
     {MODKEY | ShiftMask, XK_s, spawn, SHCMD("maimpick")},
-    {MODKEY | ShiftMask, XK_Return, spawn, {.v = roficmd}},
+    {MODKEY | ShiftMask, XK_Return, spawn, SHCMD("st-float")},
+    {MODKEY | ShiftMask, XK_y, spawn, SHCMD("ferdium")},
     {MODKEY | ShiftMask, XK_d, spawn, {.v = dmenucmd}},
     {MODKEY | ShiftMask, XK_e, spawn, {.v = fmcmd}},
     {MODKEY | ShiftMask, XK_q, spawn, SHCMD("sysact")},
@@ -175,7 +191,8 @@ static Key keys[] = {
     {MODKEY | ShiftMask, XK_l, spawn, SHCMD("bitwarden")},
     {MODKEY | ShiftMask, XK_m, spawn, SHCMD(TERMINAL " -e htop")},
     {MODKEY, XK_m, spawn, SHCMD("spotify")},
-    {MODKEY, XK_n, spawn, SHCMD(TERMINAL " -e nmtui")},
+    {MODKEY, XK_n, spawn, SHCMD(TERMINAL " -c nmtui -e nmtui")},
+    {MODKEY, XK_y, spawn, SHCMD(TERMINAL " -c neomutt -e neomutt -F ~/.config/neomutt/neomuttrc")},
     {0, XF86XK_AudioRaiseVolume, spawn,
      SHCMD("pactl -- set-sink-volume 0 +5%")},
     {0, XF86XK_AudioLowerVolume, spawn,
