@@ -354,6 +354,11 @@ insert(const char *str, ssize_t n)
 	if (n > 0)
 		memcpy(&text[cursor], str, n);
 	cursor += n;
+	if (passwd) {
+		for (size_t i = 0; i < cursor; i++) {
+		    text[i] = '*';
+		}
+	    }
 	match();
 }
 
@@ -947,7 +952,7 @@ usage(void)
 {
 	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color]\n"
-	      "             [-nhb color] [-nhf color] [-shb color] [-shf color] [-w windowid]\n", stderr);
+	      "             [-nhb color] [-nhf color] [-shb color] [-shf color] [-w windowid] [-P password]\n", stderr);
 	exit(1);
 }
 
@@ -971,6 +976,9 @@ main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
+		}
+	        else if (!strcmp(argv[i], "-P")) {
+			passwd = 1; // Add this line to handle the -P option
 		} else if (i + 1 == argc)
 			usage();
 		/* these options take one argument */

@@ -106,7 +106,7 @@ static const Rule rules[] = {
     {"obsidian", NULL, NULL, 1 << 2, 0, -1},
     {"Zathura", NULL, NULL, 1 << 2, 0, -1},
     {"Evince", NULL, NULL, 1 << 2, 0, -1},
-    {"ranger", NULL, NULL, 1 << 3, 0, -1},
+    {"file_browser", NULL, NULL, 1 << 3, 0, -1},
     {"org.gnome.Nautilus", NULL, NULL, 1 << 3, 0, -1},
     {"thunderbird", NULL, NULL, 1 << 4, 0, -1},
     {"neomutt", NULL, NULL, 1 << 4, 0, -1},
@@ -167,7 +167,7 @@ static char dmenumon[2] =
 static const char *dmenucmd[] = {"dmenu_run", "-c", "-l",    "20", "-g",
                                  "2",         "-p", "Run :", NULL};
 static const char *roficmd[] = {"rofi", "-show", "drun", NULL};
-static const char *termcmd[] = {"st -e tmux", NULL};
+static const char *termcmd[] = {"st", NULL};
 static const char *fmcmd[] = {"pcmanfm", NULL};
 static const char *webcmd[] = {"$BROWSER", NULL};
 static const char *profilecmd[] = {"asusctl profile -n", NULL};
@@ -175,12 +175,12 @@ static const char *profilecmd[] = {"asusctl profile -n", NULL};
 #include "movestack.c"
 static Key keys[] = {
     // Apps
-    {MODKEY, XK_Return, spawn, SHCMD(TERMINAL " -c tmux -e tmux")},
+    {MODKEY, XK_Return, spawn, SHCMD(TERMINAL)},
     {MODKEY, XK_w, spawn, SHCMD("$BROWSER")},
-    {MODKEY, XK_f, spawn, SHCMD("nautilus")},
+    {MODKEY, XK_f, spawn, SHCMD("$GUI_FILE_BROWSER")},
     {MODKEY, XK_space, spawn, SHCMD("ulauncher-toggle a")},
-    {MODKEY, XK_r, spawn, SHCMD("ranger-dwm")},
-    {MODKEY, XK_e, spawn, SHCMD(TERMINAL " -e lvim")},
+    {MODKEY, XK_r, spawn, SHCMD(TERMINAL " -c file_browser -e $FILE_BROWSER")},
+    {MODKEY, XK_e, spawn, SHCMD(TERMINAL " -e $EDITOR")},
     {MODKEY | ShiftMask, XK_s, spawn, SHCMD("maimpick")},
     {MODKEY | ShiftMask, XK_Return, spawn, SHCMD("st-float")},
     {MODKEY | ShiftMask, XK_y, spawn, SHCMD("ferdium")},

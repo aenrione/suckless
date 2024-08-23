@@ -41,12 +41,12 @@ BAT2(){
 
 VOL(){
     vol=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{print $2}')
-    echo -e "^c$yellow^ ^c$fg^$vol"
+    echo -e "^c$yellow^ ^c$fg^ $vol"
 }
 
 CPU(){
     cpu=$(top -b -n1 | grep "Cpu(s)" | awk '{print $2 + $4}')
-    echo -e "^c$blue^ ^c$fg^$cpu"
+    echo -e "^c$blue^ ^c$fg^$cpu"
 }
 
 MEM(){
@@ -56,7 +56,7 @@ MEM(){
 
 TIME(){
     time=$(date '+%b %d - %I:%M%p')
-    echo -e "^c$cyan^  ^c$fg^$time"
+    echo -e "^c$cyan^  ^c$fg^$time"
 }
 
 TRAFFIC(){
@@ -68,10 +68,29 @@ KB(){
 }
 
 ASUSPROFILE(){
-  profile=$(asusctl profile -p | awk 'NR==1 {print $4}')
+  profile=$(asusctl profile -p | grep "Active profile" | awk '{print $4}')
   echo -e "  ^c$fg^$profile"
 }
 
+WIFI(){
+    ethernet_ip=$(ip a | grep 'inet ' | grep ' enx00e04c6824f6' | awk '{print $2}' | sed 's/\/24//g')
+    ip=$(ip a | grep 'inet ' | grep -v ' lo' | awk '{print $2}' | sed 's/\/24//g')
+    # limit ip to 1 line
+    ip=$(echo $ip | awk '{print $1}')
+    wifi=$(iwgetid -r)
+    # if ethernet is connected, show ethernet ip
+    if [ -n "$ethernet_ip" ]; then
+        ip=$ethernet_ip
+        wifi="ETH"
+    fi
+    echo -e "^c$blue^ ^c$fg^ $wifi ($ip)"
+}
+
+GPU(){
+  gpu=$(supergfxctl -g)
+  echo -e " ^c$fg^$gpu"
+}
+
 while true; do
-  sleep 1 && xsetroot -name " $(SEP) $(ASUSPROFILE) $(SEP) $(KB) $(SEP) $(VOL) $(SEP) $(CPU)% $(SEP) $(MEM) $(SEP) $(BAT2) $(SEP) $(TIME)"
+    sleep 1 && xsetroot -name " $(SEP) $(WIFI) $(SEP) $(ASUSPROFILE) $(SEP) $(GPU) $(SEP) $(KB) $(SEP) $(VOL) $(SEP) $(CPU)% $(SEP) $(MEM) $(SEP) $(BAT2) $(SEP) $(TIME)"
 done
